@@ -82,17 +82,18 @@ struct VLCPlayerView_MAC: NSViewRepresentable {
 /// Show videoplayer on external monitor when is connected trough usb-c port
 struct ExternalDisplayWrapper: View {
     var mediaplayer = VLCMediaPlayer()
+    var onTap: () -> Void
     
     var body: some View {
         if #available(iOS 16.0, *) { // workaround to hide home indicator from bottom of the screen
             SecondaryScreenDisplay {
-                VLCPlayerView_iOS(mediaplayer: mediaplayer)
+                VLCPlayerView_iOS(mediaplayer: mediaplayer, onTap: onTap)
             }
             .persistentSystemOverlays(.hidden)
             .ignoresSafeArea()
         } else {
             SecondaryScreenDisplay {
-                VLCPlayerView_iOS(mediaplayer: mediaplayer)
+                VLCPlayerView_iOS(mediaplayer: mediaplayer, onTap: onTap)
             }
             .ignoresSafeArea()
         }
@@ -101,9 +102,27 @@ struct ExternalDisplayWrapper: View {
 
 struct VLCPlayerView_iOS: UIViewRepresentable {
     var mediaplayer = VLCMediaPlayer()
+    var onTap: () -> Void
+    
+    class Coordinator: NSObject {
+        let parent: VLCPlayerView_iOS
+        init(_ parent: VLCPlayerView_iOS) {
+            self.parent = parent
+        }
+        
+        @objc func viewTap() {
+            parent.onTap()
+        }
+    }
+        
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
     
     func makeUIView(context: Context) -> UIView {
         let view = UIView()
+        let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.viewTap))
+        view.addGestureRecognizer(tap)
         mediaplayer.drawable = view
         return view
     }

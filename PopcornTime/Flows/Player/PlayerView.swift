@@ -22,11 +22,27 @@ struct PlayerView: View {
     
     var body: some View {
         ZStack {
+            #if os(iOS)
+            VLCPlayerView(
+                mediaplayer: viewModel.mediaplayer,
+                onTap: {
+                    withAnimation {
+                        if viewModel.showInfo == true {
+                            viewModel.showInfo = false
+                        } else {
+                            viewModel.toggleControlsVisible()
+                        }
+                    }
+                }
+            )
+            .ignoresSafeArea()
+            #else
             VLCPlayerView(mediaplayer: viewModel.mediaplayer)
             #if os(tvOS)
                 .addGestures(viewModel: viewModel, dismiss: dismiss, playerHasFocus: playerHasFocus, namespace: namespace)
             #else
                 .addGestures(viewModel: viewModel, dismiss: dismiss)
+            #endif
             #endif
             controlsView
             showInfoView
