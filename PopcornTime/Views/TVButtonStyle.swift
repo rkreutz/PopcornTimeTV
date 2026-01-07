@@ -58,7 +58,9 @@ struct TVButton: View {
             }
             .onChange(of: configuration.isPressed) { newValue in
                 if newValue {
-                    onPressed()
+                    withAnimation {
+                        onPressed()                        
+                    }
                 }
             }
     }

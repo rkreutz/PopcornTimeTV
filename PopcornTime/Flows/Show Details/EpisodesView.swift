@@ -83,29 +83,64 @@ struct EpisodesView: View {
     @ViewBuilder
     func episodeView(episode: Episode, scroll: ScrollViewProxy) -> some View {
         let isSelected = episode.id == currentEpisode?.id && episode.episode == currentEpisode?.episode
-        SelectTorrentQualityButton(media: episode, action: { torrent in
-            self.currentEpisode = episode
-            showTorrent = PlayTorrentEpisode(torrent: torrent, episode: episode)
-        }, label: {
-            EpisodeView(episode: episode, onFocus: {
-                #if os(tvOS)
-                onFocus()
-                currentEpisode = episode
-//                scroll.scrollTo(episode.episode, anchor: .leading)
-                #endif
+        if isSelected {
+            SelectTorrentQualityButton(media: episode, action: { torrent in
+                showTorrent = PlayTorrentEpisode(torrent: torrent, episode: episode)
+            }, label: {
+                ZStack {
+                    EpisodeView(episode: episode, onFocus: {})
+                    #if os(iOS) || os(macOS)
+                        .environment(\.isFocused, isSelected)
+                    #endif
+                    Image(systemName: "play.fill")
+                }
             })
-            #if os(iOS) || os(macOS)
-                .environment(\.isFocused, isSelected)
+            .frame(width: theme.episodeWidth, height: theme.episodeHeight)
+            #if os(tvOS)
+            .buttonStyle(.card)
+            #else
+            .buttonStyle(
+                TVButtonStyle(
+                    onFocus: {},
+                    onPressed: {},
+                    isSelected: isSelected
+                )
+            )
             #endif
-        })
-        .frame(width: theme.episodeWidth, height: theme.episodeHeight)
-        #if os(tvOS)
-        .buttonStyle(.card)
-        #else
-        .buttonStyle(TVButtonStyle(onFocus: {}, onPressed:{
-            currentEpisode = episode
-        }, isSelected: isSelected))
-        #endif
+        } else {
+            Button(
+                action: {
+                    withAnimation {
+                        scroll.scrollTo(episode.episode, anchor: .center)
+                        currentEpisode = episode
+                    }
+                },
+                label: {
+                    EpisodeView(episode: episode, onFocus: {
+                        #if os(tvOS)
+                        onFocus()
+                        currentEpisode = episode
+                        //                scroll.scrollTo(episode.episode, anchor: .leading)
+                        #endif
+                    })
+                    #if os(iOS) || os(macOS)
+                    .environment(\.isFocused, isSelected)
+                    #endif
+                }
+            )
+            .frame(width: theme.episodeWidth, height: theme.episodeHeight)
+            #if os(tvOS)
+            .buttonStyle(.card)
+            #else
+            .buttonStyle(
+                TVButtonStyle(
+                    onFocus: {},
+                    onPressed: {},
+                    isSelected: isSelected
+                )
+            )
+            #endif
+        }
     }
     
     var episodesCountView: some View {
