@@ -25,36 +25,42 @@ class YoutubeApi {
     }
     
     class func getVideo(id: String) async throws -> Video {
-//        let body = """
-//            {
-//             "context": {
-//               "client": {
-//                "hl": "en",
-//                "clientName": "WEB",
-//                "clientVersion": "2.20210721.00.00",
-//                "mainAppWebInfo": {
-//                    "graftUrl": "/watch?v={VIDEO_ID}"
-//                }
-//               }
-//              },
-//              "videoId": "{VIDEO_ID}"
-//            }
-//            """.replacingOccurrences(of: "{VIDEO_ID}", with: id)
-//        let url = URL(string: "https://youtubei.googleapis.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")!
-        
         let body = """
             {
              "context": {
                "client": {
                     "clientName": "IOS",
-                    "clientVersion": "17.33.2",
-                    "deviceModel": "iPhone14,3",
-                    "userAgent": "com.google.ios.youtube/17.33.2 (iPhone14,3; U; CPU iOS 15_6 like Mac OS X)"
+                    "clientVersion": "20.10.4",
+                    "deviceMake": "Apple",
+                    "deviceModel": "iPhone16,2",
+                    "userAgent": "com.google.ios.youtube/20.10.4 (iPhone16,2; U; CPU iOS 18_3_2 like Mac OS X;)",
+                    "osName": "iPhone",
+                    "osVersion": "18.3.2.22D82"
+               },
+               "user": {
+                    "lockedSafetyMode": false
+               },
+               "request":{
+                    "useSsl":true,
+                    "internalExperimentFlags":[],
+                    "consistencyTokenJars":[]
                }
               },
-              "videoId": "{VIDEO_ID}"
+              "videoId": "\(id)",
+              "playbackContext":{
+                  "contentPlaybackContext":{
+                     "vis":0,
+                     "splay":false,
+                     "autoCaptionsDefaultOn":false,
+                     "autonavState":"STATE_NONE",
+                     "html5Preference":"HTML5_PREF_WANTS",
+                     "lactMilliseconds":"-1"
+                  }
+               },
+               "racyCheckOk":false,
+               "contentCheckOk":false
             }
-            """.replacingOccurrences(of: "{VIDEO_ID}", with: id)
+            """
         let url = URL(string: "https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8")!
         
         var request = URLRequest(url: url)
@@ -64,8 +70,6 @@ class YoutubeApi {
         
         let (data, _) = try await URLSession.shared.data(for: request)
         let video = try JSONDecoder().decode(Video.self, from: data)
-    
         return video
-        
     }
 }

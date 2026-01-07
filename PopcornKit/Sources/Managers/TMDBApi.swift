@@ -23,7 +23,7 @@ open class TMDBApi {
         var backdrop: String?
         
         let path = "/" + type.rawValue + "/\(tmdb)" + TMDB.images
-        if let response = try? await client.request(.get, path: path, parameters: TMDB.defaultHeaders).responseData() {
+        if let response = try? await client.request(.get, path: path, headers: TMDB.defaultHeaders).responseData() {
             let responseDict = JSON(response)
             if let poster = responseDict["posters"].first?.1["file_path"].string {
                 image = "https://image.tmdb.org/t/p/w780" + poster
@@ -43,7 +43,7 @@ open class TMDBApi {
      */
     open func getSeasonPoster(tmdbId: Int, season: Int) async throws -> String {
         let path = TMDB.tv + "/\(tmdbId)" + TMDB.season + "/\(season)" + TMDB.images
-        let data = try await client.request(.get, path: path, parameters: TMDB.defaultHeaders).responseData()
+        let data = try await client.request(.get, path: path, headers: TMDB.defaultHeaders).responseData()
         let responseDict = JSON(data)
         var image: String?
         if let poster = responseDict["posters"].first?.1["file_path"].string {
@@ -61,7 +61,7 @@ open class TMDBApi {
      */
     open func getEpisodeScreenshots(tmdbId: Int, season: Int, episode: Int) async throws -> String {
         let path = TMDB.tv + "/\(tmdbId)" + TMDB.season + "/\(season)" + TMDB.episode + "/\(episode)" + TMDB.images
-        let data = try await client.request(.get, path: path, parameters: TMDB.defaultHeaders).responseData()
+        let data = try await client.request(.get, path: path, headers: TMDB.defaultHeaders).responseData()
         let responseDict = JSON(data)
 
         var image: String?
@@ -78,7 +78,7 @@ open class TMDBApi {
      */
     open func getCharacterHeadshots(tmdbId: Int) async throws -> String {
         let path = TMDB.person + "/\(tmdbId)" + TMDB.images
-        let data = try await client.request(.get, path: path, parameters: TMDB.defaultHeaders).responseData()
+        let data = try await client.request(.get, path: path, headers: TMDB.defaultHeaders).responseData()
         let responseDict = JSON(data)
         
         var image: String?
@@ -96,7 +96,7 @@ open class TMDBApi {
      */
     open func getTrailerVideo(tmdbId: Int, season: Int) async throws -> String? {
         let path = TMDB.tv + "/\(tmdbId)" + TMDB.season + "/\(season)" + TMDB.videos
-        let data = try await client.request(.get, path: path, parameters: TMDB.defaultHeaders).responseData()
+        let data = try await client.request(.get, path: path, headers: TMDB.defaultHeaders).responseData()
         let responseDict = JSON(data)
         print(responseDict.rawValue)
         

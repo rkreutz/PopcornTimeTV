@@ -63,7 +63,7 @@ public struct Trakt {
 }
 
 public struct TMDB {
-    static let apiKey = "ac92176abc89a80e6f5df9510e326601"
+    static let apiKey = "Bearer \(Bundle.main.infoDictionary?["TMDB_ACCESS_KEY"] as? String ?? "")"
     static let base = "https://api.themoviedb.org/3"
     static let tv = "/tv"
     static let person = "/person"
@@ -77,7 +77,7 @@ public struct TMDB {
         case shows = "tv"
     }
     
-    static let defaultHeaders = ["api_key": TMDB.apiKey, "language": "en"]
+    static let defaultHeaders = ["Authorization": TMDB.apiKey, "language": "en"]
 }
 
 public struct Fanart {

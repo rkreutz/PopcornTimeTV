@@ -1,0 +1,12 @@
+//
+//  keys.xcconfig
+//  PopcornTime
+//
+//  Created by Rodrigo Kreutz on 07/01/26.
+//  Copyright © 2026 PopcornTime. All rights reserved.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+TMDB_ACCESS_KEY=<KEY>

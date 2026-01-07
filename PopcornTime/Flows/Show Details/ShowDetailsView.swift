@@ -22,7 +22,6 @@ struct ShowDetailsView: View, MediaPosterLoader {
     @Namespace var sectionEpisodes
     @Namespace var sectionWatched
     @Namespace var sectionCast
-    @Environment(\.openURL) var openURL
     
     var body: some View {
         ZStack {

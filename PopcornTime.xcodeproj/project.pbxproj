@@ -550,13 +550,14 @@
 		23E4976926947E1300175DEE /* ContentProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentProvider.swift; sourceTree = "<group>"; };
 		23E4976B26947E1300175DEE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		23E4E18426F7425300CFC3F8 /* MagnetTorrentLinkOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MagnetTorrentLinkOpener.swift; sourceTree = "<group>"; };
-		23E8172B26950B34003258CC /* PopcornKit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PopcornKit; sourceTree = "<group>"; };
+		23E8172B26950B34003258CC /* PopcornKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PopcornKit; sourceTree = "<group>"; };
 		23F0856D269787B300B341D0 /* DownloadsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsViewModel.swift; sourceTree = "<group>"; };
 		23F125D526E4D21B008097C5 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		23F15C8E26B1A8F800E0FE60 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		23F1975428F182C400DEEFF9 /* SecondaryScreenDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryScreenDisplay.swift; sourceTree = "<group>"; };
 		23F331E8283AC92C00F9C002 /* TVVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = TVVLCKit.xcframework; path = "VLCKit/TVVLCKit-binary/TVVLCKit.xcframework"; sourceTree = "<group>"; };
 		23F331EB283AC94300F9C002 /* MobileVLCKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MobileVLCKit.xcframework; path = "VLCKit/MobileVLCKit-binary/MobileVLCKit.xcframework"; sourceTree = "<group>"; };
+		37AF66932F0DFD6E006FDF0F /* keys.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = keys.xcconfig; sourceTree = "<group>"; };
 		4D0183A81DC3ACB400AB75B3 /* Locale+Langs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Locale+Langs.swift"; sourceTree = "<group>"; };
 		4D0F9E441E705BD100860852 /* Show+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Show+Extension.swift"; sourceTree = "<group>"; };
 		4D990E271DC4F00F005CDE34 /* SubtitleSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtitleSettings.swift; sourceTree = "<group>"; };
@@ -651,7 +652,6 @@
 				23446AC4267F26E60049CC72 /* Views */,
 				28EB626A1CA3362B00985F78 /* Extensions */,
 				4D990E261DC4EFF2005CDE34 /* Resources */,
-				23313B08267E375100774A85 /* Info.plist */,
 				23313B05267E375100774A85 /* Preview Content */,
 			);
 			path = PopcornTime;
@@ -911,9 +911,10 @@
 			children = (
 				23313AFE267E374F00774A85 /* PopcornTime */,
 				23E4976826947E1300175DEE /* TopShelf */,
-				23E8172B26950B34003258CC /* PopcornKit */,
+				37AF66972F0DFF71006FDF0F /* tvOS */,
 				237EC9FF26B8478100EE8B46 /* iOS */,
 				237ECA0626B8478100EE8B46 /* macOS */,
+				23E8172B26950B34003258CC /* PopcornKit */,
 				F1EDDAB5F2E1772C41C22B7A /* Frameworks */,
 				287B85351C9873A200EEF5C8 /* Products */,
 			);
@@ -945,6 +946,14 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		37AF66972F0DFF71006FDF0F /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				23313B08267E375100774A85 /* Info.plist */,
+			);
+			path = tvOS;
+			sourceTree = "<group>";
+		};
 		4D990E261DC4EFF2005CDE34 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -952,6 +961,7 @@
 				23901BEA26F6171400A7C292 /* Localizable.strings */,
 				4D990E321DC4F028005CDE34 /* Images.xcassets */,
 				4D990E271DC4F00F005CDE34 /* SubtitleSettings.swift */,
+				37AF66932F0DFD6E006FDF0F /* keys.xcconfig */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1545,6 +1555,7 @@
 /* Begin XCBuildConfiguration section */
 		23313B09267E375100774A85 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37AF66932F0DFD6E006FDF0F /* keys.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1569,7 +1580,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = PopcornTime/Info.plist;
+				INFOPLIST_FILE = tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1592,6 +1603,7 @@
 		};
 		23313B0A267E375100774A85 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37AF66932F0DFD6E006FDF0F /* keys.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1611,7 +1623,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = PopcornTime/Info.plist;
+				INFOPLIST_FILE = tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1631,6 +1643,7 @@
 		};
 		237ECA1026B8478100EE8B46 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37AF66932F0DFD6E006FDF0F /* keys.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1676,6 +1689,7 @@
 		};
 		237ECA1126B8478100EE8B46 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37AF66932F0DFD6E006FDF0F /* keys.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1714,6 +1728,7 @@
 		};
 		237ECA1326B8478100EE8B46 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37AF66932F0DFD6E006FDF0F /* keys.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1764,6 +1779,7 @@
 		};
 		237ECA1426B8478100EE8B46 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 37AF66932F0DFD6E006FDF0F /* keys.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
