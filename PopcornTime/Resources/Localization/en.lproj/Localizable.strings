@@ -155,7 +155,7 @@
 /* Play the media */
 "Play" = "Play";
 /* Show other available seasons for the selected show */
-"Series" = "Series";
+"Seasons" = "Seasons";
 /* Add/Remove the show/movie from the user's watchlist */
 "Watchlist" = "Watchlist";
 /* Mark the movie as watched */

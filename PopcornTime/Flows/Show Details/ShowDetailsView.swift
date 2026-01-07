@@ -230,7 +230,7 @@ struct ShowDetailsView: View, MediaPosterLoader {
                 VisualEffectBlur() {
                     Image("Seasons")
                 }
-                Text("Series")
+                Text("Seasons")
             }
         }
         .frame(width: theme.buttonWidth, height: theme.buttonHeight)
