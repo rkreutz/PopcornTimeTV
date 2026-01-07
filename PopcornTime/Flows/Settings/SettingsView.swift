@@ -49,9 +49,7 @@ struct SettingsView: View {
                 Section(header: sectionHeader("Player")) {
                     removeCacheOnPlayerExitButton
                     qualityAlertButton
-                    if viewModel.hasCellularNetwork {
-                        streamOnCellularButton
-                    }
+                    streamOnCellularButton
                 }
                 Section(header: sectionHeader("Subtitles")) {
                     subtitleLanguageButton
@@ -70,9 +68,6 @@ struct SettingsView: View {
                 
                 Section(header: sectionHeader("Info")) {
                     clearCacheButton
-//                    button(text: "Check for Updates", value: lastUpdate) {
-//
-//                    }
                     button(text: "Version", value: viewModel.version) {
                         
                     }
