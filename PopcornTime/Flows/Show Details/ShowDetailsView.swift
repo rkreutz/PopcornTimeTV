@@ -117,6 +117,8 @@ struct ShowDetailsView: View, MediaPosterLoader {
                     }
                     #if os(tvOS)
                     .padding([.bottom, .top], 30)
+                    #elseif os(iOS)
+                    .padding([.bottom], 30)
                     #endif
                     .background( show.episodes.isEmpty ? .clear : Color.init(white: 0, opacity: 0.3))
                     .id(sectionEpisodes)
