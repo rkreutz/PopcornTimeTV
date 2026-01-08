@@ -84,10 +84,6 @@ struct SettingsView: View {
             .padding(.trailing, theme.iconLeading)
             #endif
         }
-        #if os(iOS)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
     
     @State var clearCacheText = Session.removeCacheOnPlayerExit ? "On".localized : "Off".localized

@@ -105,6 +105,7 @@ struct MovieDetailsView: View, MediaPosterLoader {
             }.onDisappear {
 //                viewModel.stopTheme()
             }
+            .toolbar(.hidden, for: .tabBar)
         .ignoresSafeArea()
     }
     

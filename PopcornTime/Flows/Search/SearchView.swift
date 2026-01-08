@@ -21,6 +21,7 @@ struct SearchView: View, CharacterHeadshotLoader {
     
     @StateObject var viewModel = SearchViewModel()
     @FocusState private var isFocused: Bool
+    @Environment(\.dismiss) var dismiss
     
     let columns = [
         GridItem(.adaptive(minimum: theme.itemWidth), spacing: theme.itemSpacing)
@@ -28,6 +29,30 @@ struct SearchView: View, CharacterHeadshotLoader {
     
     
     var body: some View {
+        #if os(tvOS) || os(macOS)
+        NavigationStack {
+            VStack {
+                searchView
+                errorView
+                if viewModel.isLoading {
+                    ProgressView()
+                }
+                switch viewModel.selection {
+                case .movies:
+                    moviesSection
+                case .shows:
+                    showsSection
+                case .people:
+                    peopleSection
+                }
+                Spacer()
+            }
+            #if os(tvOS)
+            .searchable(text: $viewModel.search)
+            .focused($isFocused)
+            #endif
+        }
+        #else
         VStack {
             searchView
             errorView
@@ -44,17 +69,15 @@ struct SearchView: View, CharacterHeadshotLoader {
             }
             Spacer()
         }
-        #if os(iOS) || os(tvOS)
         .searchable(text: $viewModel.search)
         .focused($isFocused)
-        #endif
-        #if os(iOS)
         .navigationBarHidden(true)
         .onAppear {
             if viewModel.search.isEmpty {
                 isFocused = true
             }
         }
+        .toolbar(.hidden, for: .tabBar)
         #endif
     }
     
@@ -62,9 +85,15 @@ struct SearchView: View, CharacterHeadshotLoader {
     var searchView: some View {
         #if os(iOS)
         VStack {
-            SearchBarView(text: $viewModel.search)
+            SearchBarView(
+                text: $viewModel.search,
+                cancelAction: {
+                    dismiss()
+                }
+            )
+            
             pickerView
-            .pickerStyle(.segmented)
+                .pickerStyle(.segmented)
         }
         .padding([.leading, .trailing])
         .padding(.horizontal, SearchView.theme.horizontalPadding)

@@ -15,27 +15,25 @@ struct PopcornTime: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                TabBarView()
-                    .modifier(AcceptTermsOfService())
+            TabBarView()
+                .modifier(AcceptTermsOfService())
                 #if os(iOS) || os(macOS)
-                    .modifier(MagnetTorrentLinkOpener())
+                .modifier(MagnetTorrentLinkOpener())
                 #elseif os(tvOS)
-                    .modifier(TopShelfLinkOpener())
+                .modifier(TopShelfLinkOpener())
                 #endif
-                    .onAppear {
-                        // bootstrap torrent session
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                            PTTorrentsSession.shared()
-                        }
+                .onAppear {
+                    // bootstrap torrent session
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        PTTorrentsSession.shared()
                     }
-            }
-            .preferredColorScheme(.dark)
-            #if os(iOS)
-            .accentColor(.white)
-            .navigationViewStyle(StackNavigationViewStyle())
-            .modifier(SecondaryScreen())
-            #endif
+                }
+                .preferredColorScheme(.dark)
+                #if os(iOS)
+                .accentColor(.white)
+                .navigationViewStyle(StackNavigationViewStyle())
+                .modifier(SecondaryScreen())
+                #endif
         }
 //        #if os(iOS) || os(macOS)
 //        .commands(content: {

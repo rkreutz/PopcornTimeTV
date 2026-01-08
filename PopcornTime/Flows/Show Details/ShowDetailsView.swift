@@ -139,6 +139,7 @@ struct ShowDetailsView: View, MediaPosterLoader {
             viewModel.load()
         }
         .environmentObject(viewModel)
+        .toolbar(.hidden, for: .tabBar)
         .ignoresSafeArea()
     }
     

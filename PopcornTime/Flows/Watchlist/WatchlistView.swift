@@ -15,24 +15,26 @@ struct WatchlistView: View, MediaPosterLoader {
     @StateObject var viewModel = WatchlistViewModel()
     
     var body: some View {
-        ZStack {
-            emptyView
-            ScrollView {
-                if viewModel.movies.count > 0 {
-                    movieSection
+        NavigationStack {
+            ZStack {
+                emptyView
+                ScrollView {
+                    if viewModel.movies.count > 0 {
+                        movieSection
+                    }
+                    if viewModel.shows.count > 0 {
+                        showSection
+                    }
                 }
-                if viewModel.shows.count > 0 {
-                    showSection
+                .onAppear {
+                    viewModel.load()
                 }
             }
-            .onAppear {
-                viewModel.load()
-            }
+            #if os(iOS)
+            .navigationBarHidden(true)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
-        #if os(iOS)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
     
     @ViewBuilder

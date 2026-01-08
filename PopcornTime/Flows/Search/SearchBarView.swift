@@ -11,6 +11,7 @@ import SwiftUI
 struct SearchBarView: View {
     @Binding var text: String
     @FocusState private var isFocused: Bool
+    var cancelAction: (() -> Void)?
  
     var body: some View {
         HStack {
@@ -42,10 +43,11 @@ struct SearchBarView: View {
                     }
                 )
  
-            if isFocused {
+            if isFocused || cancelAction != nil {
                 Button(action: {
 //                    self.text = ""
                     self.isFocused = false
+                    self.cancelAction?()
                 }) {
                     Text("Cancel")
                 }

@@ -18,36 +18,38 @@ struct DownloadsView: View {
         .publisher(for: NSNotification.Name("DownloadDeleted"))
     
     var body: some View {
-        ZStack {
-            if viewModel.isEmpty {
-                emptyView
-            } else {
-                ScrollView {
-                    VStack {
-                        if !viewModel.downloading.isEmpty {
-                            downloadingSection
+        NavigationStack {
+            ZStack {
+                if viewModel.isEmpty {
+                    emptyView
+                } else {
+                    ScrollView {
+                        VStack {
+                            if !viewModel.downloading.isEmpty {
+                                downloadingSection
+                            }
+                            if !viewModel.completedMovies.isEmpty {
+                                movieSection
+                            }
+                            if !viewModel.completedEpisodes.isEmpty {
+                                showSection
+                            }
                         }
-                        if !viewModel.completedMovies.isEmpty {
-                            movieSection
-                        }
-                        if !viewModel.completedEpisodes.isEmpty {
-                            showSection
-                        }
+                        .padding(.leading, theme.leading)
                     }
-                    .padding(.leading, theme.leading)
                 }
             }
+            .onAppear {
+                viewModel.reload()
+            }
+            .onReceive(downloadDeleted) { _ in
+                viewModel.reload()
+            }
+            #if os(iOS)
+            .navigationBarHidden(true)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
-        .onAppear {
-            viewModel.reload()
-        }
-        .onReceive(downloadDeleted) { _ in
-            viewModel.reload()
-        }
-        #if os(iOS)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
     
     @ViewBuilder

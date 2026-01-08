@@ -16,7 +16,7 @@ class SearchViewModel: ObservableObject {
     }
     
     @Published var search = ""
-    @Published var selection: SearchType = .movies
+    @Published var selection: SearchType
     @Published var isLoading = false
     
     @Published var movies: [Movie] = []
@@ -25,7 +25,8 @@ class SearchViewModel: ObservableObject {
     @Published var error: Error?
     var onTextChange: AnyCancellable?
     
-    init() {
+    init(selection: SearchType = .movies) {
+        self.selection = selection
         self.onTextChange = Publishers.CombineLatest($search, $selection)
             .removeDuplicates { prev, curent in
                 let isSame = prev == curent

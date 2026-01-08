@@ -16,58 +16,56 @@ struct MoviesView: View, MediaRatingsLoader {
     let columns = [
         GridItem(.adaptive(minimum: theme.itemWidth), spacing: theme.itemSpacing)
     ]
-    
+        
     var body: some View {
-        ZStack(alignment: .leading) {
-            errorView
-            ScrollView {
-                #if os(iOS)
-                filtersView
+        NavigationStack {
+            ZStack(alignment: .leading) {
+                errorView
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: MoviesView.theme.columnSpacing) {
+                        ForEach(viewModel.movies, id: \.id) { movie in
+                            navigationLink(movie: movie)
+                        }
+                        if (!viewModel.movies.isEmpty) {
+                            loadingView
+                        }
+                    }
+                    .padding(.all, 0)
+                    
+                    if viewModel.isLoading && viewModel.movies.isEmpty {
+                        ProgressView()
+                    }
+                }
+                .padding(.horizontal)
+                .onAppear {
+                    if viewModel.movies.isEmpty {
+                        viewModel.loadMovies()
+                    }
+                }
+                #if os(tvOS)
+                LeftSidePanelView(currentSort: $viewModel.currentFilter, currentGenre: $viewModel.currentGenre)
+                    .padding(.leading, -50)
                 #endif
-                LazyVGrid(columns: columns, spacing: MoviesView.theme.columnSpacing) {
-                    ForEach(viewModel.movies, id: \.id) { movie in
-                        navigationLink(movie: movie)
-                    }
-                    if (!viewModel.movies.isEmpty) {
-                        loadingView
-                    }
-                }
-                .padding(.all, 0)
-                
-                if viewModel.isLoading && viewModel.movies.isEmpty {
-                    ProgressView()
-                }
             }
-            .padding(.horizontal)
-            .onAppear {
-                if viewModel.movies.isEmpty {
-                    viewModel.loadMovies()
+            #if os(macOS)
+            .modifier(VisibleToolbarView(toolbarContent: { isVisible in
+                ToolbarItem(placement: .navigation) {
+                    if isVisible {
+                        filtersView
+                    }
                 }
+            }))
+            #endif
+            #if os(tvOS) || os(iOS)
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                viewModel.appDidBecomeActive()
             }
-            #if os(tvOS)
-            LeftSidePanelView(currentSort: $viewModel.currentFilter, currentGenre: $viewModel.currentGenre)
-                .padding(.leading, -50)
+            #endif
+            #if os(iOS)
+            .navigationBarHidden(false)
+            .toolbar { filtersContent }
             #endif
         }
-        #if os(macOS)
-        .modifier(VisibleToolbarView(toolbarContent: { isVisible in
-            ToolbarItem(placement: .navigation) {
-                if isVisible {
-                    filtersView
-                }
-            }
-        }))
-        #endif
-                                
-        #if os(tvOS) || os(iOS)
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            viewModel.appDidBecomeActive()
-        }
-        #endif
-        #if os(iOS)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
     
     @ViewBuilder
@@ -108,25 +106,82 @@ struct MoviesView: View, MediaRatingsLoader {
         }
     }
     
-    @ViewBuilder
-    var filtersView: some View {
-        HStack(spacing: 0) {
-            Picker("Movies", selection: $viewModel.currentFilter) {
-                ForEach(Popcorn.Filters.allCases, id: \.self) { item in
-                    Text(item.string).tag(item)
-                }
-            }
-            #if os(iOS)
-            Text("Movies   -   Genre")
-            #endif
-            Picker("Genre", selection: $viewModel.currentGenre) {
-                ForEach(Popcorn.Genres.allCases, id: \.self) { item in
-                    Text(item.string).tag(item)
-                }
+    @ToolbarContentBuilder
+    var filtersContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .topBarLeading) {
+            HStack(spacing: 0) {
+                Menu(
+                    content: {
+                        Text("Category")
+                        ForEach(Popcorn.Filters.allCases, id: \.self) { item in
+                            Button(
+                                action: { viewModel.currentFilter = item },
+                                label: {
+                                    HStack {
+                                        Text(item.string)
+                                        if viewModel.currentFilter == item {
+                                            Spacer()
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    },
+                    label: {
+                        HStack(spacing: 4) {
+                            Text(viewModel.currentFilter.string)
+                                .font(.headline)
+                            Image(systemName: "chevron.down")
+                                .foregroundStyle(.secondary)
+                                .font(.caption2)
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
+                        .background(HierarchicalShapeStyle.tertiary, in: .capsule)
+                    }
+                )
+                
+                Menu(
+                    content: {
+                        Text("Genre")
+                        ForEach(Popcorn.Genres.allCases, id: \.self) { item in
+                            Button(
+                                action: { viewModel.currentGenre = item },
+                                label: {
+                                    HStack {
+                                        Text(item.string)
+                                        if viewModel.currentGenre == item {
+                                            Spacer()
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    },
+                    label: {
+                        HStack(spacing: 4) {
+                            Text(viewModel.currentGenre.string)
+                                .font(.headline)
+                            Image(systemName: "chevron.down")
+                                .foregroundStyle(.secondary)
+                                .font(.caption2)
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
+                        .background(HierarchicalShapeStyle.tertiary, in: .capsule)
+                    }
+                )
             }
         }
-        .foregroundColor(.appSecondary)
-        .font(.callout)
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink(
+                destination: { SearchView(viewModel: .init(selection: .movies)) },
+                label: {Image(systemName: "magnifyingglass") }
+            )
+        }
     }
 }
 

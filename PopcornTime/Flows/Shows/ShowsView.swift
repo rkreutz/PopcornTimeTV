@@ -18,55 +18,54 @@ struct ShowsView: View, MediaRatingsLoader {
     ]
     
     var body: some View {
-        ZStack(alignment: .leading) {
-            errorView
-            ScrollView {
-                #if os(iOS)
-                filtersView
+        NavigationStack {
+            ZStack(alignment: .leading) {
+                errorView
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: ShowsView.theme.columnSpacing) {
+                        ForEach(viewModel.shows, id: \.id) { show in
+                            navigationLink(show: show)
+                        }
+                        if (!viewModel.shows.isEmpty) {
+                            loadingView
+                        }
+                    }
+                    .padding(.all, 0)
+                    
+                    if viewModel.isLoading && viewModel.shows.isEmpty {
+                        ProgressView()
+                    }
+                }
+                .padding(.horizontal)
+                .onAppear {
+                    if viewModel.shows.isEmpty {
+                        viewModel.loadShows()
+                    }
+                }
+                #if os(tvOS)
+                LeftSidePanelView(currentSort: $viewModel.currentFilter, currentGenre: $viewModel.currentGenre)
+                    .padding(.leading, -50)
                 #endif
-                LazyVGrid(columns: columns, spacing: ShowsView.theme.columnSpacing) {
-                    ForEach(viewModel.shows, id: \.id) { show in
-                        navigationLink(show: show)
-                    }
-                    if (!viewModel.shows.isEmpty) {
-                        loadingView
-                    }
-                }
-                .padding(.all, 0)
-                
-                if viewModel.isLoading && viewModel.shows.isEmpty {
-                    ProgressView()
-                }
             }
-            .padding(.horizontal)
-            .onAppear {
-                if viewModel.shows.isEmpty {
-                    viewModel.loadShows()
+            #if os(macOS)
+            .modifier(VisibleToolbarView(toolbarContent: { isVisible in
+                ToolbarItem(placement: .navigation) {
+                    if isVisible {
+                        filtersView
+                    }
                 }
+            }))
+            #endif
+            #if os(tvOS) || os(iOS)
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                viewModel.appDidBecomeActive()
             }
-            #if os(tvOS)
-            LeftSidePanelView(currentSort: $viewModel.currentFilter, currentGenre: $viewModel.currentGenre)
-                .padding(.leading, -50)
+            #endif
+            #if os(iOS)
+            .navigationBarHidden(false)
+            .toolbar { filtersContent }
             #endif
         }
-        #if os(macOS)
-        .modifier(VisibleToolbarView(toolbarContent: { isVisible in
-            ToolbarItem(placement: .navigation) {
-                if isVisible {
-                    filtersView
-                }
-            }
-        }))
-        #endif
-        #if os(tvOS) || os(iOS)
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            viewModel.appDidBecomeActive()
-        }
-        #endif
-        #if os(iOS)
-        .navigationBarHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
     
     @ViewBuilder
@@ -107,26 +106,82 @@ struct ShowsView: View, MediaRatingsLoader {
         }
     }
     
-    @ViewBuilder
-    var filtersView: some View {
-        HStack(spacing: 0) {
-            Picker("Shows", selection: $viewModel.currentFilter) {
-                ForEach(Popcorn.Filters.allCases, id: \.self) { item in
-                    Text(item.string).tag(item)
-                }
-            
-            }
-            #if os(iOS)
-            Text("Shows   -   Genre")
-            #endif
-            Picker("Genre", selection: $viewModel.currentGenre) {
-                ForEach(Popcorn.Genres.allCases, id: \.self) { item in
-                    Text(item.string).tag(item)
-                }
+    @ToolbarContentBuilder
+    var filtersContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .topBarLeading) {
+            HStack(spacing: 0) {
+                Menu(
+                    content: {
+                        Text("Category")
+                        ForEach(Popcorn.Filters.allCases, id: \.self) { item in
+                            Button(
+                                action: { viewModel.currentFilter = item },
+                                label: {
+                                    HStack {
+                                        Text(item.string)
+                                        if viewModel.currentFilter == item {
+                                            Spacer()
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    },
+                    label: {
+                        HStack(spacing: 4) {
+                            Text(viewModel.currentFilter.string)
+                                .font(.headline)
+                            Image(systemName: "chevron.down")
+                                .foregroundStyle(.secondary)
+                                .font(.caption2)
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
+                        .background(HierarchicalShapeStyle.tertiary, in: .capsule)
+                    }
+                )
+                
+                Menu(
+                    content: {
+                        Text("Genre")
+                        ForEach(Popcorn.Genres.allCases, id: \.self) { item in
+                            Button(
+                                action: { viewModel.currentGenre = item },
+                                label: {
+                                    HStack {
+                                        Text(item.string)
+                                        if viewModel.currentGenre == item {
+                                            Spacer()
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                    },
+                    label: {
+                        HStack(spacing: 4) {
+                            Text(viewModel.currentGenre.string)
+                                .font(.headline)
+                            Image(systemName: "chevron.down")
+                                .foregroundStyle(.secondary)
+                                .font(.caption2)
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
+                        .background(HierarchicalShapeStyle.tertiary, in: .capsule)
+                    }
+                )
             }
         }
-        .foregroundColor(.appSecondary)
-        .font(.callout)
+        
+        ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink(
+                destination: { SearchView(viewModel: .init(selection: .shows)) },
+                label: {Image(systemName: "magnifyingglass") }
+            )
+        }
     }
 }
 

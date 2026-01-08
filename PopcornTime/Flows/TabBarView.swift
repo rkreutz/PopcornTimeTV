@@ -33,6 +33,7 @@ struct TabBarView: View {
     var body: some View {
         #if os(iOS) || os(tvOS)
         TabView(selection: $selectedTab) {
+            #if os(tvOS)
             SearchView()
                 .tabItem {
                     Image(systemName: "magnifyingglass")
@@ -41,6 +42,7 @@ struct TabBarView: View {
                     #endif
                 }
                 .tag(Selection.search)
+            #endif
             MoviesView()
                 .tabItem {
                     #if os(iOS)
